@@ -1,40 +1,43 @@
-const axios = require("axios");
+import axios from 'axios';
 
-const API = "https://saveig.in/wp-json/visolix/api/download";
+export async function handleInstagram(req, res) {
+  const { url } = req.query;
 
-module.exports = async (req, res) => {
+  if (!url || url.trim() === '') {
+    return res.status(400).json({
+      status: false,
+      message: "Parameter 'url' wajib diisi!"
+    });
+  }
 
-const url = req.query.url;
+  try {
+    const { data } = await axios.post('https://co.wuk.sh/api/json', { url }, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
 
-if(!url){
+    if (data && data.url) {
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil media Instagram",
+        result: {
+          url: data.url
+        }
+      });
+    }
 
-return res.json({
-
-creator:"Xeno",
-status:false,
-message:"Masukkan URL Instagram"
-
-});
-
-}
-
-
-try{
-
-
-const response = await axios.post(
-
-API,
-
-{
-url:url,
-format:"",
-captcha_response:null
-},
-
-{
-
-headers:{
+    throw new Error("Tautan media tidak ditemukan");
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengambil media Instagram",
+      error: err.message
+    });
+  }
+}headers:{
 
 "accept":"*/*",
 
