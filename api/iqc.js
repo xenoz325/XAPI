@@ -42,7 +42,7 @@ module.exports = async (req, res) => {
     res.json({
       creator: "Xeno",
       status: false,
-      message: "Gagal membuat gambarnya"
+      message: "Gagal membuat gambar IQC"
     });
 
   } catch (e) {
