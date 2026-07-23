@@ -1,13 +1,14 @@
 {
   "name": "xapi",
   "version": "1.0.0",
-  "description": "XAPI by Xeno",
+  "description": "XAPI by Xeno - Multi Purpose API Platform",
   "main": "index.js",
   "scripts": {
     "dev": "vercel dev"
   },
   "dependencies": {
     "axios": "^1.7.9",
+    "cheerio": "^1.0.0",
     "qrcode": "^1.5.4"
   }
 }
