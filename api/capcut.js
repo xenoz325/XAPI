@@ -1,125 +1,41 @@
-const axios = require("axios");
+import axios from 'axios';
 
-module.exports = async (req, res) => {
+export async function handleCapcut(req, res) {
+  const { url } = req.query;
 
-const url = req.query.url;
+  if (!url || url.trim() === '') {
+    return res.status(400).json({
+      status: false,
+      message: "Parameter 'url' wajib diisi!"
+    });
+  }
 
-if(!url){
+  try {
+    const { data } = await axios.post('https://co.wuk.sh/api/json', { url }, {
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
 
-return res.json({
+    if (data && data.url) {
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil media CapCut",
+        result: {
+          title: data.filename || "CapCut Video",
+          download_url: data.url
+        }
+      });
+    }
 
-creator:"Xeno",
-status:false,
-message:"Masukkan URL CapCut"
-
-});
-
+    throw new Error("Tautan media tidak ditemukan");
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengambil media CapCut",
+      error: err.message
+    });
+  }
 }
-
-
-try {
-
-
-const response = await axios.post(
-
-"https://snapvideotools.com/id/api/snap",
-
-{
-text:url
-},
-
-{
-
-headers:{
-
-"Content-Type":"application/json",
-
-"Accept":"application/json, text/javascript, */*; q=0.01",
-
-"X-Requested-With":"XMLHttpRequest",
-
-"User-Agent":
-"Mozilla/5.0 (Linux; Android 10; Mobile) AppleWebKit/537.36 Chrome/124.0 Mobile Safari/537.36",
-
-"Referer":
-"https://snapvideotools.com/id/capcut-downloader",
-
-"Origin":
-"https://snapvideotools.com"
-
-}
-
-}
-
-);
-
-
-
-const json = response.data;
-
-
-if(json.code !== 0){
-
-return res.json({
-
-creator:"Xeno",
-
-status:false,
-
-message:"Gagal mengambil video"
-
-});
-
-}
-
-
-
-const {
-title,
-cover,
-mediaUrls
-}=json.data;
-
-
-
-res.json({
-
-creator:"Xeno",
-
-status:true,
-
-platform:"CapCut",
-
-result:{
-
-title:title,
-
-thumbnail:cover,
-
-media:mediaUrls
-
-}
-
-});
-
-
-}catch(error){
-
-
-res.status(500).json({
-
-creator:"Xeno",
-
-status:false,
-
-message:"CapCut downloader error",
-
-error:error.message
-
-});
-
-
-}
-
-
-};
