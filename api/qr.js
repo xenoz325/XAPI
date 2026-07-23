@@ -1,74 +1,33 @@
-const QRCode = require("qrcode");
+import QRCode from 'qrcode';
 
-module.exports = async (req, res) => {
+export async function handleQr(req, res) {
+  const { text } = req.query;
 
-const text = req.query.text;
+  if (!text || text.trim() === '') {
+    return res.status(400).json({
+      status: false,
+      message: "Parameter 'text' wajib diisi!"
+    });
+  }
 
-if(!text){
+  try {
+    const qrDataUrl = await QRCode.toDataURL(text, {
+      errorCorrectionLevel: 'M',
+      margin: 2,
+      width: 300
+    });
 
-return res.status(400).json({
+    return res.status(200).json({
+      status: true,
+      message: "Berhasil membuat QR Code",
+      result: qrDataUrl
+    });
 
-creator:"Xeno",
-
-status:false,
-
-message:"Text atau URL kosong"
-
-});
-
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: "Gagal membuat QR Code",
+      error: err.message
+    });
+  }
 }
-
-
-try{
-
-
-const qr = await QRCode.toBuffer(text, {
-
-type:"png",
-
-width:500,
-
-margin:2,
-
-color:{
-dark:"#000000",
-light:"#ffffff"
-}
-
-});
-
-
-res.setHeader(
-"Content-Type",
-"image/png"
-);
-
-
-res.setHeader(
-"Content-Disposition",
-"inline; filename=xapi-qr.png"
-);
-
-
-res.send(qr);
-
-
-
-}catch(error){
-
-
-res.status(500).json({
-
-creator:"Xeno",
-
-status:false,
-
-message:error.message
-
-});
-
-
-}
-
-
-};
