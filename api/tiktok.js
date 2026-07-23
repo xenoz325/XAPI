@@ -1,155 +1,47 @@
-const axios = require("axios");
-const cheerio = require("cheerio");
+import axios from 'axios';
 
-const base = "https://tiktokio.com/api/v1/tk/html";
+export async function handleTiktok(req, res) {
+  const { url } = req.query;
 
-module.exports = async (req, res) => {
+  if (!url || url.trim() === '') {
+    return res.status(400).json({
+      status: false,
+      message: "Parameter 'url' wajib diisi!"
+    });
+  }
 
-const url = req.query.url;
+  try {
+    const { data } = await axios.post('https://www.tikwm.com/api/', null, {
+      params: { url, hd: 1 },
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36'
+      }
+    });
 
-if(!url){
+    if (data && data.code === 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Berhasil mengambil data TikTok",
+        result: {
+          title: data.data.title,
+          cover: data.data.cover,
+          video_no_wm: data.data.play,
+          video_wm: data.data.wmplay,
+          music: data.data.music,
+          author: {
+            nickname: data.data.author.nickname,
+            username: data.data.author.unique_id
+          }
+        }
+      });
+    }
 
-return res.json({
-
-creator:"Xeno",
-status:false,
-message:"Masukkan URL TikTok"
-
-});
-
+    throw new Error(data.msg || "Gagal memproses URL TikTok");
+  } catch (err) {
+    return res.status(500).json({
+      status: false,
+      message: "Gagal mengambil media TikTok",
+      error: err.message
+    });
+  }
 }
-
-
-try {
-
-
-const session = await axios.get(
-"https://tiktokio.com/",
-{
-headers:{
-"User-Agent":"Mozilla/5.0"
-}
-}
-);
-
-
-const cookies = session.headers["set-cookie"]
-?
-session.headers["set-cookie"].join("; ")
-:
-"";
-
-
-const response = await axios.post(
-
-base,
-
-{
-vid:url,
-prefix:"tiktokio.com"
-},
-
-{
-
-headers:{
-
-"Content-Type":"application/json",
-
-"Cookie":cookies,
-
-"Origin":"https://tiktokio.com",
-
-"Referer":"https://tiktokio.com/",
-
-"User-Agent":
-"Mozilla/5.0"
-
-}
-
-}
-
-);
-
-
-
-const $ = cheerio.load(response.data);
-
-
-
-let links=[];
-
-
-$(".download-links a").each((i,el)=>{
-
-const link=$(el).attr("href");
-
-const type=$(el).text().trim();
-
-
-if(link){
-
-links.push({
-
-type:type,
-
-url:link
-
-});
-
-}
-
-});
-
-
-
-res.json({
-
-creator:"Xeno",
-
-status:true,
-
-platform:"TikTok",
-
-result:{
-
-
-title:
-$(".video-info h3")
-.text()
-.trim(),
-
-
-thumbnail:
-$(".video-info img")
-.attr("src") || null,
-
-
-downloads:links
-
-
-}
-
-});
-
-
-
-}catch(error){
-
-
-res.status(500).json({
-
-creator:"Xeno",
-
-status:false,
-
-message:"Gagal mengambil video TikTok",
-
-error:error.message
-
-});
-
-
-}
-
-
-};
