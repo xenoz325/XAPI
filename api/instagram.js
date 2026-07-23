@@ -37,6 +37,9 @@ export async function handleInstagram(req, res) {
       error: err.message
     });
   }
+}      error: err.message
+    });
+  }
 }headers:{
 
 "accept":"*/*",
