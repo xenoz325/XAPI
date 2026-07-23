@@ -1,56 +1,259 @@
-module.exports=(req,res)=>{
+module.exports = (req, res) => {
 
-let number=req.query.number;
+const input = req.query.number;
 
-if(!number){
+if (!input) {
 return res.json({
 creator:"Xeno",
 status:false,
-message:"Nomor kosong"
+message:"Nomor tidak ditemukan"
 });
 }
 
 
-let prefix=number.substring(0,5);
+let number = input.replace(/\D/g,"");
 
 
-let operator="Unknown";
+if(number.startsWith("0")){
+number = "62" + number.substring(1);
+}
 
 
-const list={
+if(!number.startsWith("62")){
+return res.json({
+creator:"Xeno",
+status:false,
+message:"Hanya mendukung nomor Indonesia"
+});
+}
 
-"62811":"Telkomsel",
-"62812":"Telkomsel",
-"62813":"Telkomsel",
-"62821":"Telkomsel",
-"62822":"Telkomsel",
 
-"62817":"XL",
-"62818":"XL",
-"62819":"XL",
+const prefix = number.substring(0,5);
 
-"62856":"Indosat",
-"62857":"Indosat",
-"62858":"Indosat",
 
-"62877":"Axis",
-"62878":"Axis",
+const database = {
 
-"62895":"Tri",
-"62896":"Tri"
+"62811":{
+operator:"Telkomsel",
+brand:"Kartu Halo",
+type:"Mobile",
+category:"Postpaid"
+},
+
+"62812":{
+operator:"Telkomsel",
+brand:"Simpati",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62813":{
+operator:"Telkomsel",
+brand:"Simpati",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62821":{
+operator:"Telkomsel",
+brand:"Loop",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62822":{
+operator:"Telkomsel",
+brand:"Simpati",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62823":{
+operator:"Telkomsel",
+brand:"Simpati",
+type:"Mobile",
+category:"Prepaid"
+},
+
+
+"62817":{
+operator:"XL Axiata",
+brand:"XL",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62818":{
+operator:"XL Axiata",
+brand:"XL",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62819":{
+operator:"XL Axiata",
+brand:"XL",
+type:"Mobile",
+category:"Prepaid"
+},
+
+
+"62855":{
+operator:"Indosat",
+brand:"Matrix",
+type:"Mobile",
+category:"Postpaid"
+},
+
+"62856":{
+operator:"Indosat",
+brand:"IM3",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62857":{
+operator:"Indosat",
+brand:"IM3",
+type:"Mobile",
+category:"Prepaid"
+},
+
+
+"62877":{
+operator:"Axis",
+brand:"Axis",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62878":{
+operator:"Axis",
+brand:"Axis",
+type:"Mobile",
+category:"Prepaid"
+},
+
+
+"62895":{
+operator:"Tri",
+brand:"3 Indonesia",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62896":{
+operator:"Tri",
+brand:"3 Indonesia",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62897":{
+operator:"Tri",
+brand:"3 Indonesia",
+type:"Mobile",
+category:"Prepaid"
+},
+
+
+"62831":{
+operator:"Smartfren",
+brand:"Smartfren",
+type:"Mobile",
+category:"Prepaid"
+},
+
+"62888":{
+operator:"Smartfren",
+brand:"Smartfren",
+type:"Mobile",
+category:"Prepaid"
+}
 
 };
 
 
-operator=list[prefix]||"Tidak diketahui";
+
+let info = database[prefix] || {
+
+operator:"Unknown",
+brand:"Unknown",
+type:"Mobile",
+category:"Unknown"
+
+};
+
+
+let valid =
+number.length >= 11 &&
+number.length <= 13;
+
 
 
 res.json({
 
 creator:"Xeno",
+
 status:true,
-number:number,
-operator:operator
+
+checked_at:new Date().toISOString(),
+
+result:{
+
+
+original_number:input,
+
+normalized_number:number,
+
+international_format:"+"+number,
+
+
+country:{
+name:"Indonesia",
+code:"ID",
+calling_code:"+62"
+},
+
+
+network:{
+
+operator:info.operator,
+
+brand:info.brand,
+
+type:info.type,
+
+category:info.category
+
+},
+
+
+number_info:{
+
+prefix:prefix,
+
+length:number.length,
+
+valid_format:valid
+
+},
+
+
+location:{
+
+country:"Indonesia",
+region:"Unknown"
+
+},
+
+
+note:
+"Information detected from phone number prefix"
+
+
+}
+
 
 });
 
