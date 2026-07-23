@@ -1,33 +1,34 @@
-import QRCode from 'qrcode';
+const QRCode = require("qrcode");
 
-export async function handleQr(req, res) {
-  const { text } = req.query;
+module.exports = async (req, res) => {
+  const text = req.query.text;
 
-  if (!text || text.trim() === '') {
-    return res.status(400).json({
+  if (!text) {
+    return res.json({
+      creator: "Xeno",
       status: false,
-      message: "Parameter 'text' wajib diisi!"
+      message: "Text kosong"
     });
   }
 
   try {
-    const qrDataUrl = await QRCode.toDataURL(text, {
-      errorCorrectionLevel: 'M',
+    let qrDataUrl = await QRCode.toDataURL(text, {
+      errorCorrectionLevel: "M",
       margin: 2,
       width: 300
     });
 
-    return res.status(200).json({
+    res.json({
+      creator: "Xeno",
       status: true,
-      message: "Berhasil membuat QR Code",
       result: qrDataUrl
     });
 
-  } catch (err) {
-    return res.status(500).json({
+  } catch (e) {
+    res.json({
+      creator: "Xeno",
       status: false,
-      message: "Gagal membuat QR Code",
-      error: err.message
+      message: e.message
     });
   }
-}
+};
