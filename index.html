@@ -1,0 +1,1030 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>XAPI - Premium Web API Platform</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #030508;
+      --bg-surface: #0a0d14;
+      --bg-card: #101520;
+      --bg-glass: rgba(16, 21, 32, 0.7);
+      --accent: #2563eb;
+      --accent-glow: rgba(37, 99, 235, 0.35);
+      --accent-hover: #1d4ed8;
+      --border: rgba(255, 255, 255, 0.07);
+      --border-light: rgba(255, 255, 255, 0.14);
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-dim: #64748b;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: var(--bg-main);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* --- NAVBAR --- */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 16px 8%;
+      background: rgba(3, 5, 8, 0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .brand-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, rgba(37, 99, 235, 0.2), rgba(124, 58, 237, 0.2));
+      border: 1px solid rgba(37, 99, 235, 0.4);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 0 15px var(--accent-glow);
+    }
+
+    .brand-title {
+      font-size: 20px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: var(--text-primary);
+    }
+
+    .nav-tabs {
+      display: flex;
+      background: var(--bg-surface);
+      padding: 4px;
+      border-radius: 30px;
+      border: 1px solid var(--border);
+    }
+
+    .nav-tab {
+      padding: 8px 22px;
+      border-radius: 20px;
+      border: none;
+      background: transparent;
+      color: var(--text-secondary);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .nav-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .nav-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    /* --- PAGE TRANSITION --- */
+    .page-section {
+      display: none;
+      opacity: 0;
+      transform: translateY(15px);
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .page-section.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* --- PAGE 1: DASHBOARD --- */
+    .hero-container {
+      max-width: 900px;
+      margin: 80px auto 40px;
+      padding: 0 24px;
+      text-align: center;
+    }
+
+    .status-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 20px;
+      background: rgba(37, 99, 235, 0.08);
+      border: 1px solid rgba(37, 99, 235, 0.2);
+      color: #60a5fa;
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 24px;
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #3b82f6;
+      box-shadow: 0 0 8px #3b82f6;
+    }
+
+    .hero-title {
+      font-size: 52px;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -1.5px;
+      margin-bottom: 20px;
+    }
+
+    .hero-title span {
+      background: linear-gradient(135deg, #60a5fa, #a855f7);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+      max-width: 640px;
+      margin: 0 auto 36px;
+    }
+
+    .hero-actions {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+    }
+
+    .btn-main {
+      padding: 14px 32px;
+      border-radius: var(--radius-md);
+      border: none;
+      background: var(--accent);
+      color: #ffffff;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 8px 24px var(--accent-glow);
+      transition: all 0.25s ease;
+    }
+
+    .btn-main:hover {
+      background: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 30px var(--accent-glow);
+    }
+
+    /* Metrics Section */
+    .metrics-grid {
+      max-width: 1000px;
+      margin: 60px auto;
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .metric-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 24px;
+      text-align: center;
+      transition: transform 0.3s ease, border-color 0.3s ease;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-light);
+    }
+
+    .metric-value {
+      font-size: 32px;
+      font-weight: 800;
+      color: var(--text-primary);
+      letter-spacing: -1px;
+    }
+
+    .metric-label {
+      font-size: 13px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      font-weight: 500;
+    }
+
+    /* Features Section */
+    .section-container {
+      max-width: 1000px;
+      margin: 80px auto;
+      padding: 0 24px;
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .section-title {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .grid-benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+
+    .benefit-card {
+      background: var(--bg-glass);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .benefit-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-6px);
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .benefit-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: var(--radius-sm);
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .benefit-card h3 {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .benefit-card p {
+      font-size: 14px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    /* --- PAGE 2: DOKUMENTASI HUB --- */
+    .doc-hub {
+      max-width: 1000px;
+      margin: 40px auto 80px;
+      padding: 0 24px;
+    }
+
+    .search-wrapper {
+      position: relative;
+      margin-bottom: 36px;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-dim);
+      pointer-events: none;
+      transition: color 0.2s;
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 16px 20px 16px 52px;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .search-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 20px var(--accent-glow);
+    }
+
+    .search-input:focus + .search-icon {
+      color: var(--accent);
+    }
+
+    .category-block {
+      margin-bottom: 48px;
+      transition: opacity 0.3s ease;
+    }
+
+    .category-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .category-title {
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    .api-buttons-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+    }
+
+    .api-action-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px 22px;
+      cursor: pointer;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+      text-align: left;
+    }
+
+    .api-action-btn.hidden {
+      display: none !important;
+    }
+
+    .api-action-btn:hover {
+      background: var(--bg-surface);
+      border-color: var(--accent);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4), 0 0 15px var(--accent-glow);
+    }
+
+    .btn-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .btn-name {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .btn-endpoint {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+    }
+
+    .btn-arrow {
+      color: var(--text-dim);
+      transition: transform 0.25s ease, color 0.25s ease;
+    }
+
+    .api-action-btn:hover .btn-arrow {
+      color: var(--accent);
+      transform: translateX(6px);
+    }
+
+    .no-results {
+      display: none;
+      text-align: center;
+      padding: 40px 0;
+      color: var(--text-dim);
+      font-size: 14px;
+    }
+
+    /* --- FLOATING MODAL WINDOW --- */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.75);
+      backdrop-filter: blur(12px);
+      z-index: 200;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .floating-window {
+      width: 100%;
+      max-width: 620px;
+      background: var(--bg-surface);
+      border: 1px solid var(--border-light);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(37, 99, 235, 0.15);
+      overflow: hidden;
+      transform: scale(0.92) translateY(20px);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .modal-overlay.open .floating-window {
+      transform: scale(1) translateY(0);
+    }
+
+    .window-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 24px;
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .window-title {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .method-tag {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px;
+      background: rgba(16, 185, 129, 0.15);
+      color: #10b981;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .close-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 50%;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .window-body {
+      padding: 24px;
+    }
+
+    .window-desc {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+      line-height: 1.5;
+    }
+
+    .input-wrapper {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+
+    .modal-input {
+      flex: 1;
+      padding: 14px 16px;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .modal-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 10px var(--accent-glow);
+    }
+
+    .modal-select {
+      padding: 14px 16px;
+      background: var(--bg-main);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s;
+    }
+
+    .modal-select:focus {
+      border-color: var(--accent);
+    }
+
+    .modal-select option {
+      background: var(--bg-surface);
+      color: var(--text-primary);
+    }
+
+    .modal-submit {
+      padding: 0 24px;
+      background: var(--accent);
+      border: none;
+      border-radius: var(--radius-sm);
+      color: #ffffff;
+      font-weight: 600;
+      font-size: 13px;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .modal-submit:hover {
+      background: var(--accent-hover);
+    }
+
+    .modal-submit:active {
+      transform: scale(0.98);
+    }
+
+    /* Output Section */
+    .output-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .output-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .status-badge {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .code-console {
+      background: #020408;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 16px;
+      max-height: 240px;
+      overflow: auto;
+    }
+
+    pre {
+      font-family: 'Fira Code', monospace;
+      font-size: 12px;
+      color: #38bdf8;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero-title { font-size: 36px; }
+      .metrics-grid { grid-template-columns: 1fr; }
+      .input-wrapper { flex-direction: column; }
+      .modal-submit { padding: 14px; }
+      .floating-window { margin: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <a href="#" class="brand">
+      <div class="brand-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M7 8l-4 4 4 4"/>
+          <path d="M17 8l4 4-4 4"/>
+          <path d="M14 4l-4 16"/>
+        </svg>
+      </div>
+      <span class="brand-title">XAPI</span>
+    </a>
+
+    <nav class="nav-tabs">
+      <button class="nav-tab active" onclick="switchPage('dashboard', this)">Dashboard</button>
+      <button class="nav-tab" onclick="switchPage('docs', this)">Dokumentasi</button>
+    </nav>
+  </header>
+
+  <main id="dashboard" class="page-section active">
+    
+    <section class="hero-container">
+      <div class="status-tag">
+        <span class="status-dot"></span>
+        XAPI Operational
+      </div>
+      <h1 class="hero-title">Performa API Tinggi.<br><span>Integrasi Tanpa Hambatan.</span></h1>
+      <p class="hero-subtitle">Platform REST API modern dengan infrastruktur serverless berkecepatan tinggi. Siap digunakan untuk kebutuhan aplikasi dan pengolahan data secara mudah.</p>
+      
+      <div class="hero-actions">
+        <button class="btn-main" onclick="switchPage('docs', document.querySelectorAll('.nav-tab')[1])">Jelajahi API</button>
+      </div>
+    </section>
+
+    <section class="metrics-grid">
+      <div class="metric-card">
+        <div class="metric-value">99.9%</div>
+        <div class="metric-label">Uptime Reliability</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">&lt;80ms</div>
+        <div class="metric-label">Average Response Time</div>
+      </div>
+      <div class="metric-card">
+        <div class="metric-value">100%</div>
+        <div class="metric-label">Free API Access</div>
+      </div>
+    </section>
+
+    <section class="section-container">
+      <div class="section-header">
+        <h2 class="section-title">Keunggulan XAPI</h2>
+      </div>
+
+      <div class="grid-benefits">
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+          </div>
+          <h3>Kecepatan Optimal</h3>
+          <p>Didesain menggunakan arsitektur Vercel Edge Serverless untuk pemrosesan data instan tanpa delay.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <h3>Proteksi Aman</h3>
+          <p>Sistem dilengkapi konfigurasi CORS dan proteksi HTTP Security Headers secara ketat.</p>
+        </div>
+
+        <div class="benefit-card">
+          <div class="benefit-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <h3>Respon Standar JSON</h3>
+          <p>Format data tersusun rapi dan konsisten, memudahkan integrasi di frontend maupun backend.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <main id="docs" class="page-section">
+    <div class="doc-hub">
+      
+      <div class="search-wrapper">
+        <input type="text" id="searchInput" class="search-input" placeholder="Cari endpoint atau fitur API..." oninput="filterApis()">
+        <svg class="search-icon" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      </div>
+
+      <div id="noResults" class="no-results">Fitur API tidak ditemukan.</div>
+
+      <div class="category-block">
+        <div class="category-header">
+          <span class="category-title">Tools & Utilities</span>
+        </div>
+
+        <div class="api-buttons-grid">
+          
+          <button class="api-action-btn" data-name="IP Tracker" data-endpoint="/api/ip" onclick="openFloatingModal('ip')">
+            <div class="btn-info">
+              <span class="btn-name">IP Tracker</span>
+              <span class="btn-endpoint">GET /api/ip</span>
+            </div>
+            <div class="btn-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+          <button class="api-action-btn" data-name="Cek Operator" data-endpoint="/api/operator" onclick="openFloatingModal('operator')">
+            <div class="btn-info">
+              <span class="btn-name">Cek Operator</span>
+              <span class="btn-endpoint">GET /api/operator</span>
+            </div>
+            <div class="btn-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+          <button class="api-action-btn" data-name="QR Generator" data-endpoint="/api/qr" onclick="openFloatingModal('qr')">
+            <div class="btn-info">
+              <span class="btn-name">QR Generator</span>
+              <span class="btn-endpoint">GET /api/qr</span>
+            </div>
+            <div class="btn-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+      <div class="category-block">
+        <div class="category-header">
+          <span class="category-title">Menu Maker</span>
+        </div>
+
+        <div class="api-buttons-grid">
+
+          <button class="api-action-btn" data-name="Brat Generator" data-endpoint="/api/brat" onclick="openFloatingModal('brat')">
+            <div class="btn-info">
+              <span class="btn-name">Brat Generator</span>
+              <span class="btn-endpoint">GET /api/brat</span>
+            </div>
+            <div class="btn-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+          <button class="api-action-btn" data-name="Brat Video Generator" data-endpoint="/api/bratvid" onclick="openFloatingModal('bratvid')">
+            <div class="btn-info">
+              <span class="btn-name">Brat Video Generator</span>
+              <span class="btn-endpoint">GET /api/bratvid</span>
+            </div>
+            <div class="btn-arrow">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 18 15 12 9 6"/></svg>
+            </div>
+          </button>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="modalOverlay" class="modal-overlay" onclick="handleOverlayClick(event)">
+    <div class="floating-window">
+      
+      <div class="window-header">
+        <div class="window-title">
+          <span class="method-tag">GET</span>
+          <span id="modalTitle">API Name</span>
+        </div>
+        <button class="close-btn" onclick="closeFloatingModal()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="window-body">
+        <p id="modalDesc" class="window-desc">Deskripsi fitur API.</p>
+
+        <div class="input-wrapper">
+          <input id="modalInput" type="text" class="modal-input" placeholder="Parameter input..." onkeydown="if(event.key==='Enter') sendApiRequest()">
+          <select id="modalFormatSelect" class="modal-select" style="display: none;">
+            <option value="mp4">MP4</option>
+            <option value="gif">GIF</option>
+          </select>
+          <button class="modal-submit" onclick="sendApiRequest()">Execute</button>
+        </div>
+
+        <div class="output-header">
+          <span class="output-label">Response</span>
+          <span id="modalStatus" class="status-badge">Ready</span>
+        </div>
+        
+        <div class="code-console">
+          <pre id="modalResult">// Output JSON akan ditampilkan di sini</pre>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // Tab Controller dengan Transisi Smooth
+    function switchPage(pageId, element) {
+      const pages = document.querySelectorAll('.page-section');
+      const tabs = document.querySelectorAll('.nav-tab');
+
+      pages.forEach(page => page.classList.remove('active'));
+      tabs.forEach(tab => tab.classList.remove('active'));
+
+      setTimeout(() => {
+        document.getElementById(pageId).classList.add('active');
+        if (element) element.classList.add('active');
+      }, 50);
+    }
+
+    // Filter Search API Function
+    function filterApis() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const buttons = document.querySelectorAll('.api-action-btn');
+      const blocks = document.querySelectorAll('.category-block');
+      let visibleCount = 0;
+
+      buttons.forEach(btn => {
+        const name = btn.getAttribute('data-name').toLowerCase();
+        const endpoint = btn.getAttribute('data-endpoint').toLowerCase();
+
+        if (name.includes(query) || endpoint.includes(query)) {
+          btn.classList.remove('hidden');
+          visibleCount++;
+        } else {
+          btn.classList.add('hidden');
+        }
+      });
+
+      // Sembunyikan kategori jika semua item di dalamnya terfilter
+      blocks.forEach(block => {
+        const hasVisible = block.querySelectorAll('.api-action-btn:not(.hidden)').length > 0;
+        block.style.display = hasVisible ? 'block' : 'none';
+      });
+
+      // Tampilkan pesan "tidak ditemukan" jika tidak ada hasil
+      const noResults = document.getElementById('noResults');
+      noResults.style.display = (visibleCount === 0) ? 'block' : 'none';
+    }
+
+    // Endpoints Data Registry
+    const apiRegistry = {
+      ip: {
+        title: "Track IP Address",
+        desc: "Melacak koordinat geografis, negara, dan ISP berdasarkan alamat IP.",
+        endpoint: "/api/ip?ip=",
+        placeholder: "Masukkan IP Address (Contoh: 8.8.8.8)",
+        hasFormat: false
+      },
+      operator: {
+        title: "Cek Operator",
+        desc: "Menganalisis jenis penyedia layanan seluler dari nomor telepon.",
+        endpoint: "/api/operator?number=",
+        placeholder: "Masukkan Nomor HP (Contoh: 08123456789)",
+        hasFormat: false
+      },
+      qr: {
+        title: "QR Code Generator",
+        desc: "Generasi kode QR otomatis dari URL atau teks input.",
+        endpoint: "/api/qr?text=",
+        placeholder: "Masukkan teks atau URL",
+        hasFormat: false
+      },
+      brat: {
+        title: "Brat Generator",
+        desc: "Membuat gambar teks berestetika Brat dari input teks.",
+        endpoint: "/api/brat?text=",
+        placeholder: "Masukkan teks",
+        hasFormat: false
+      },
+      bratvid: {
+        title: "Brat Video Generator",
+        desc: "Membuat animasi video/GIF teks gaya Brat dari input teks.",
+        endpoint: "/api/bratvid?text=",
+        placeholder: "Masukkan teks",
+        hasFormat: true
+      }
+    };
+
+    let activeKey = "";
+
+    // Modal Handlers
+    function openFloatingModal(key) {
+      activeKey = key;
+      const data = apiRegistry[key];
+
+      document.getElementById('modalTitle').innerText = data.title;
+      document.getElementById('modalDesc').innerText = data.desc;
+      
+      const inputEl = document.getElementById('modalInput');
+      const formatSelect = document.getElementById('modalFormatSelect');
+
+      inputEl.placeholder = data.placeholder;
+      inputEl.value = "";
+
+      // Tampilkan/Sembunyikan dropdown format (hanya untuk bratvid)
+      if (data.hasFormat) {
+        formatSelect.style.display = "block";
+      } else {
+        formatSelect.style.display = "none";
+      }
+
+      document.getElementById('modalResult').innerText = "// Output JSON akan ditampilkan di sini";
+      document.getElementById('modalStatus').innerText = "Ready";
+      document.getElementById('modalStatus').style.color = "var(--text-dim)";
+
+      document.getElementById('modalOverlay').classList.add('open');
+      setTimeout(() => inputEl.focus(), 150);
+    }
+
+    function closeFloatingModal() {
+      document.getElementById('modalOverlay').classList.remove('open');
+    }
+
+    function handleOverlayClick(event) {
+      if (event.target.id === 'modalOverlay') {
+        closeFloatingModal();
+      }
+    }
+
+    // Send API Request Function
+    async function sendApiRequest() {
+      if (!activeKey) return;
+
+      const inputVal = document.getElementById('modalInput').value.trim();
+      const resultEl = document.getElementById('modalResult');
+      const statusEl = document.getElementById('modalStatus');
+      const dataConfig = apiRegistry[activeKey];
+
+      if (!inputVal) {
+        resultEl.innerText = JSON.stringify({ error: "Parameter input wajib diisi" }, null, 2);
+        statusEl.innerText = "HTTP 400 Bad Request";
+        statusEl.style.color = "#ef4444";
+        return;
+      }
+
+      let targetUrl = dataConfig.endpoint + encodeURIComponent(inputVal);
+
+      // Jika API mendukung parameter format (seperti Brat Vid)
+      if (dataConfig.hasFormat) {
+        const selectedFormat = document.getElementById('modalFormatSelect').value;
+        targetUrl += `&format=${selectedFormat}`;
+      }
+
+      resultEl.innerText = "// Mengirim request ke server...";
+      statusEl.innerText = "Processing...";
+      statusEl.style.color = "#f59e0b";
+
+      try {
+        const response = await fetch(targetUrl);
+        const data = await response.json();
+
+        resultEl.innerText = JSON.stringify(data, null, 2);
+        statusEl.innerText = `HTTP ${response.status} OK`;
+        statusEl.style.color = "#10b981";
+      } catch (err) {
+        resultBoxError(err, resultEl, statusEl);
+      }
+    }
+
+    function resultBoxError(err, resultEl, statusEl) {
+      resultEl.innerText = JSON.stringify({
+        status: "error",
+        message: "Gagal menghubungkan ke server API",
+        details: err.message
+      }, null, 2);
+      statusEl.innerText = "HTTP 500 Error";
+      statusEl.style.color = "#ef4444";
+    }
+  </script>
+
+</body>
+</html>
