@@ -1,53 +1,42 @@
-const { createCanvas } = require("canvas");
+export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET');
 
-module.exports = async (req, res) => {
-  const text = req.query.text;
-  const isWhite = req.query.white === "true";
+  const { text } = req.query;
 
   if (!text) {
-    return res.json({
-      creator: "Xeno",
+    return res.status(400).json({
       status: false,
-      message: "Teks kosong"
+      message: 'Parameter "text" wajib diisi!'
     });
   }
 
   try {
-    const width = 500;
-    const height = 500;
-    const canvas = createCanvas(width, height);
-    const ctx = canvas.getContext("2d");
+    const targetUrl = `https://api.blckrose.my.id/maker/brat?text=${encodeURIComponent(text)}`;
+    const response = await fetch(targetUrl);
 
-    ctx.fillStyle = isWhite ? "#ffffff" : "#8ace00";
-    ctx.fillRect(0, 0, width, height);
+    if (!response.ok) {
+      return res.status(response.status).json({
+        status: false,
+        message: 'Gagal mengambil data dari server Brat'
+      });
+    }
 
-    ctx.fillStyle = "#000000";
-    ctx.font = "normal 68px 'Arial Narrow', Arial, sans-serif";
-    ctx.textAlign = "center";
-    ctx.textBaseline = "middle";
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      return res.status(200).json(data);
+    }
 
-    const cleanText = text.toLowerCase();
+    const imageBuffer = await response.arrayBuffer();
+    res.setHeader('Content-Type', contentType || 'image/png');
+    return res.status(200).send(Buffer.from(imageBuffer));
 
-    ctx.filter = "blur(1px)";
-    ctx.fillText(cleanText, width / 2, height / 2);
-
-    const imageBuffer = canvas.toBuffer("image/png");
-    const base64Image = `data:image/png;base64,${imageBuffer.toString("base64")}`;
-
-    res.json({
-      creator: "Xeno",
-      status: true,
-      result: {
-        text: cleanText,
-        image: base64Image
-      }
-    });
-
-  } catch (e) {
-    res.json({
-      creator: "Xeno",
+  } catch (error) {
+    return res.status(500).json({
       status: false,
-      message: e.message
+      message: 'Server error',
+      error: error.message
     });
   }
-};
+}
